@@ -20,20 +20,7 @@ def criar_tabela_estudantes():
     conn.commit()
     conn.close()
     
-def criar_tabela_matricula():
-    conn = conectar()
-    cursor = conn.cursor()
-    cursor.execute(
-        """
-            CREATE TABLE IF NOT EXISTS matricula(
-                id INTEGER PRIMARY KEY,
-                nome_disciplina TEXT,
-                estudante_id INTEGER,
-                FOREIGN KEY (estudante_id) REFERENCES estudantes(id)
-            )
-        """
-    )
-    
+
     conn.commit()
     conn.close()
     
@@ -64,3 +51,51 @@ def listar_estudantes():
         print(estudante)
     conn.commit()
     conn.close()
+    
+    
+def criar_tabela_matricula():
+    conn = conectar()
+    cursor = conn.cursor()
+    cursor.execute(
+        """
+            CREATE TABLE IF NOT EXISTS matricula(
+                id INTEGER PRIMARY KEY,
+                nome_disciplina TEXT,
+                estudante_id INTEGER,
+                FOREIGN KEY (estudante_id) REFERENCES estudantes(id)
+            )
+        """
+    )
+    
+    
+def criar_matricula(estudante_id, nome_disciplina):
+    conn = conectar()
+    cursor = conn.cursor()
+    cursor.execute(
+    """
+        INSERT INTO matricula (estudante_id, nome_disciplina)\
+        VALUES(?, ?)
+    """, (estudante_id, nome_disciplina)
+    )
+    
+    conn.commit()
+    conn.close()
+
+
+def listar_matriculas():
+    conn = conectar()
+    cursor = conn.cursor()
+    cursor.execute(
+    """
+        SELECT matricula.id, estudantes.nome, matricula.nome_disciplina
+        FROM matricula
+        JOIN estudantes ON matricula.estudante_id = estudantes.id
+    """
+    ) 
+    
+    matricula = cursor.fetchall()
+    for m in matricula:
+        print(m)
+    conn.commit()
+    conn.close()
+    
